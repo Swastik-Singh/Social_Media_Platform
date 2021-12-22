@@ -3,7 +3,9 @@ const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
-const {MONGO_URL} = require('./config')
+const { MONGO_URL } = require("./config");
+const { authenticateRequest } = require("./middleware");
+const { indexRouter, userMethods, postMethods } = require("./routes");
 
 dotenv.config();
 
@@ -29,6 +31,19 @@ app.use(function (req, res, next) {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.get("/", indexRouter);
+app.post("/api/authenticate", userMethods.authenticateUser);
+app.post("/api/follow/:id", authenticateRequest, userMethods.followUser);
+app.post("/api/unfollow/:id", authenticateRequest, userMethods.unfollowUser);
+app.get("/api/user", authenticateRequest, userMethods.getUserDetails);
+app.post("/api/posts", authenticateRequest, postMethods.createPost);
+app.delete("/api/posts/:id", authenticateRequest, postMethods.deletePostById);
+app.post("/api/like/:id", authenticateRequest, postMethods.likePost);
+app.post("/api/unlike/:id", authenticateRequest, postMethods.unlikePost);
+app.post("/api/comment/:id", authenticateRequest, postMethods.addCommentToPost);
+app.get("/api/posts/:id", authenticateRequest, postMethods.getPostDetailsById);
+app.get("/api/all_posts", authenticateRequest, postMethods.fetchAllPosts);
 
 const port = process.env.PORT || 5000;
 
