@@ -3,12 +3,13 @@ const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
+const {MONGO_URL} = require('./config')
 
 dotenv.config();
 
 const mongoose = require("mongoose");
 mongoose
-  .connect(process.env.MONGO_URL, {
+  .connect(process.env.MONGO_URL || MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
